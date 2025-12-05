@@ -40,22 +40,27 @@ This creates an optimized production build in the `build` folder.
 
 ### Automatic Deployment (Recommended)
 
-1. **Update the homepage URL** in `package.json`:
-   - Replace `YOUR_USERNAME` with your GitHub username
-   - If your repo name is different, update that too
+The repository is configured for automatic deployment via GitHub Actions.
 
-2. **Enable GitHub Pages** in your repository settings:
-   - Go to Settings → Pages
-   - Source: Select "GitHub Actions"
+**To enable deployment:**
 
-3. **Add your Amazon Store ID as a secret** (optional but recommended):
-   - Go to Settings → Secrets and variables → Actions
+1. **Enable GitHub Pages** in your repository settings:
+   - Go to: https://github.com/CydVilla/amazon-search/settings/pages
+   - Under "Source", select **"GitHub Actions"** (not "Deploy from a branch")
+   - Save the settings
+
+2. **Add your Amazon Store ID as a secret** (optional but recommended):
+   - Go to: https://github.com/CydVilla/amazon-search/settings/secrets/actions
    - Click "New repository secret"
    - Name: `REACT_APP_AMAZON_STORE_ID`
    - Value: Your Amazon affiliate store ID
+   - Click "Add secret"
 
-4. **Push to main/master branch**:
-   - The GitHub Actions workflow will automatically build and deploy your app
+3. **Trigger the deployment**:
+   - The workflow will run automatically on pushes to `main`
+   - Or manually trigger: Go to Actions tab → "Deploy to GitHub Pages" → "Run workflow"
+
+Once enabled, your app will be available at: **https://CydVilla.github.io/amazon-search**
 
 ### Manual Deployment
 
