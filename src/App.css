@@ -265,6 +265,47 @@
   font-size: 1.2rem;
 }
 
+.product-summary {
+  margin-top: 25px;
+  padding: 25px;
+  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+  border-radius: 15px;
+  border: 2px solid #667eea;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.summary-content {
+  color: #333;
+  line-height: 1.8;
+}
+
+.summary-paragraph {
+  margin-bottom: 12px;
+  font-size: 1rem;
+}
+
+.summary-paragraph:last-child {
+  margin-bottom: 0;
+}
+
+.summary-paragraph strong {
+  color: #667eea;
+  font-weight: 700;
+  font-size: 1.1em;
+}
+
 .search-result {
   margin-top: 20px;
   padding: 15px;
