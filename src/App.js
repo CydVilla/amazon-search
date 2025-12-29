@@ -53,7 +53,7 @@ const generateProductSummary = (searchQuery) => {
     ['portable', 'wireless', 'smart', 'digital', 'pro', 'ultra', 'mini', 'premium', 
      'professional', 'deluxe', 'compact', 'lightweight', 'bluetooth', 'usb', 'hdmi',
      'waterproof', 'durable', 'rechargeable', 'adjustable', 'foldable'].some(desc => 
-      w.toLowerCase().includes(desc.toLowerCase())
+      w.toLowerCase().includes(desc)
     )
   );
   
@@ -93,9 +93,12 @@ const generateProductSummary = (searchQuery) => {
   }
   summary += `that matches your search criteria\n\n`;
   
+  // Helper function to capitalize words
+  const capitalizeWord = (word) => word.charAt(0).toUpperCase() + word.slice(1);
+  
   // Add features if found
   if (descriptiveWords.length > 0) {
-    summary += `⚡ Key Features: ${descriptiveWords.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(', ')}\n\n`;
+    summary += `⚡ Key Features: ${descriptiveWords.map(capitalizeWord).join(', ')}\n\n`;
   }
   
   // Add size/dimensions if found
@@ -233,14 +236,20 @@ function App() {
             <div className="summary-content">
               {productSummary.split('\n\n').map((paragraph, index) => (
                 <p key={index} className="summary-paragraph">
-                  {paragraph.split('\n').map((line, lineIndex) => (
-                    <span key={lineIndex}>
-                      {line.split('**').map((part, partIndex) => 
-                        partIndex % 2 === 1 ? <strong key={partIndex}>{part}</strong> : part
-                      )}
-                      {lineIndex < paragraph.split('\n').length - 1 && <br />}
-                    </span>
-                  ))}
+                  {paragraph.split('\n').map((line, lineIndex) => {
+                    // Parse markdown-style bold text with ** delimiters
+                    const parts = line.split('**');
+                    return (
+                      <span key={lineIndex}>
+                        {parts.map((part, partIndex) => {
+                          // Only apply bold formatting if we have a matching pair
+                          const isBold = partIndex % 2 === 1 && parts.length > partIndex;
+                          return isBold ? <strong key={partIndex}>{part}</strong> : part;
+                        })}
+                        {lineIndex < paragraph.split('\n').length - 1 && <br />}
+                      </span>
+                    );
+                  })}
                 </p>
               ))}
             </div>
