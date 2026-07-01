@@ -34,16 +34,96 @@ const featuredGames = [
   }
 ];
 
+// Generate a stylish product summary based on the search query
+const generateProductSummary = (searchQuery) => {
+  const query = searchQuery.trim();
+  const words = query.split(/\s+/);
+  const productName = query;
+  
+  // Check for size/dimension keywords
+  const sizeKeywords = words.filter(w => 
+    /\d+/.test(w) || 
+    ['inch', 'inches', 'ft', 'feet', 'cm', 'mm', 'small', 'medium', 'large', 'xl', 'xxl'].some(size => 
+      w.toLowerCase().includes(size)
+    )
+  );
+  
+  // Check for descriptive keywords
+  const descriptiveWords = words.filter(w => 
+    ['portable', 'wireless', 'smart', 'digital', 'pro', 'ultra', 'mini', 'premium', 
+     'professional', 'deluxe', 'compact', 'lightweight', 'bluetooth', 'usb', 'hdmi',
+     'waterproof', 'durable', 'rechargeable', 'adjustable', 'foldable'].some(desc => 
+      w.toLowerCase().includes(desc)
+    )
+  );
+  
+  // Detect product categories
+  const categories = {
+    electronics: ['headphones', 'laptop', 'phone', 'tablet', 'camera', 'speaker', 'monitor', 'keyboard', 'mouse'],
+    clothing: ['shirt', 'pants', 'shoes', 'jacket', 'dress', 'hat', 'socks', 'sweater'],
+    home: ['furniture', 'lamp', 'chair', 'desk', 'bed', 'table', 'sofa', 'rug'],
+    fitness: ['dumbbell', 'yoga', 'treadmill', 'bike', 'weights', 'mat', 'resistance'],
+    kitchen: ['blender', 'mixer', 'pan', 'pot', 'knife', 'cutting', 'coffee', 'toaster']
+  };
+  
+  let detectedCategory = '';
+  for (const [category, keywords] of Object.entries(categories)) {
+    if (keywords.some(keyword => query.toLowerCase().includes(keyword))) {
+      detectedCategory = category;
+      break;
+    }
+  }
+  
+  // Build the summary
+  let summary = `✨ **${productName}**\n\n`;
+  
+  // Add product description
+  summary += `🔍 What it is: `;
+  if (detectedCategory) {
+    const categoryLabels = {
+      electronics: 'An electronic device',
+      clothing: 'A clothing item',
+      home: 'A home furnishing',
+      fitness: 'Fitness equipment',
+      kitchen: 'A kitchen appliance'
+    };
+    summary += `${categoryLabels[detectedCategory]} `;
+  } else {
+    summary += `A product `;
+  }
+  summary += `that matches your search criteria\n\n`;
+  
+  // Helper function to capitalize words
+  const capitalizeWord = (word) => word.charAt(0).toUpperCase() + word.slice(1);
+  
+  // Add features if found
+  if (descriptiveWords.length > 0) {
+    summary += `⚡ Key Features: ${descriptiveWords.map(capitalizeWord).join(', ')}\n\n`;
+  }
+  
+  // Add size/dimensions if found
+  if (sizeKeywords.length > 0) {
+    summary += `📏 Size & Dimensions: ${sizeKeywords.join(' ')}\n\n`;
+  }
+  
+  summary += `🛍️ Searching Amazon for the best deals and options...`;
+  
+  return summary;
+};
+
 function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchUrl, setSearchUrl] = useState(null);
+  const [productSummary, setProductSummary] = useState(null);
   const [activeCardIndex, setActiveCardIndex] = useState(0);
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       const url = generateAmazonLink(searchQuery.trim());
+      const summary = generateProductSummary(searchQuery.trim());
       setSearchUrl(url);
+      setProductSummary(summary);
       // Open in new tab
       window.open(url, '_blank', 'noopener,noreferrer');
     }
@@ -150,6 +230,31 @@ function App() {
             </button>
           </div>
         </div>
+
+        {productSummary && (
+          <div className="product-summary">
+            <div className="summary-content">
+              {productSummary.split('\n\n').map((paragraph, index) => (
+                <p key={index} className="summary-paragraph">
+                  {paragraph.split('\n').map((line, lineIndex) => {
+                    // Parse markdown-style bold text with ** delimiters
+                    const parts = line.split('**');
+                    return (
+                      <span key={lineIndex}>
+                        {parts.map((part, partIndex) => {
+                          // Only apply bold formatting if we have a matching pair
+                          const isBold = partIndex % 2 === 1 && parts.length > partIndex;
+                          return isBold ? <strong key={partIndex}>{part}</strong> : part;
+                        })}
+                        {lineIndex < paragraph.split('\n').length - 1 && <br />}
+                      </span>
+                    );
+                  })}
+                </p>
+              ))}
+            </div>
+          </div>
+        )}
 
         {searchUrl && (
           <div className="search-result">
